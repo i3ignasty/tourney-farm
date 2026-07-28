@@ -1,0 +1,18 @@
+# Python cache files
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.env
+
+# Excel temporary lock files
+~$*.xlsx
+
+# Local test exports
+tournaments.xlsx
+iowa_fishing_tournaments_2026.xlsx
+
+# OS junk
+.DS_Store
+Thumbs.db

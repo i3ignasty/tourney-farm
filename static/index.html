@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tourney Farm</title>
+
+    <style>
+        :root {
+            --bg: #f4f1e8;
+            --card: #ffffff;
+            --primary: #254d32;
+            --primary-light: #356b46;
+            --accent: #d99b2b;
+            --accent-soft: #fff3d8;
+            --text: #1e2a22;
+            --muted: #68766d;
+            --border: #ded8c7;
+            --danger: #8b2f2f;
+            --success: #2f7d4f;
+            --blue: #2f5f7d;
+            --shadow: 0 10px 30px rgba(31, 44, 34, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(217, 155, 43, 0.18), transparent 30%),
+                linear-gradient(180deg, #f8f5eb 0%, var(--bg) 100%);
+            color: var(--text);
+        }
+
+        header {
+            background: linear-gradient(135deg, #1f3f2a, #356b46);
+            color: white;
+            padding: 34px 20px 44px;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 34px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+        }
+
+        .brand-text {
+            line-height: 1.1;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 24px;
+            letter-spacing: 0.4px;
+        }
+
+        .brand-text span {
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 13px;
+        }
+
+        .status-pill {
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 9px 13px;
+            border-radius: 999px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.25fr 0.75fr;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(38px, 5vw, 64px);
+            line-height: 1.02;
+            letter-spacing: -1.5px;
+        }
+
+        .hero p {
+            max-width: 680px;
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 18px;
+            line-height: 1.55;
+            margin: 18px 0 26px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #1e2a22;
+            box-shadow: 0 8px 22px rgba(217, 155, 43, 0.28);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.14);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-dark {
+            background: var(--primary);
+            color: white;
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 22px;
+            padding: 22px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+        }
+
+        .hero-card h3 {
+            margin: 0 0 12px;
+            font-size: 18px;
+        }
+
+        .hero-card p {
+            margin: 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.76);
+        }
+
+        main {
+            margin-top: -28px;
+            padding: 0 20px 60px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .summary-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .summary-card span {
+            display: block;
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .summary-card strong {
+            font-size: 32px;
+            line-height: 1;
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            padding: 22px;
+            margin-bottom: 22px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .panel-header p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: 1.2fr 0.9fr 0.8fr 0.8fr 0.8fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        input, select {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: #fffdf8;
+            border-radius: 12px;
+            padding: 12px 13px;
+            font-size: 14px;
+            color: var(--text);
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(217, 155, 43, 0.18);
+        }
+
+        .quick-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .quick-filters button {
+            background: #fffdf8;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .section-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .tab {
+            background: #fffdf8;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .event-card {
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: #fffdf8;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 230px;
+        }
+
+        .event-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .date-box {
+            min-width: 64px;
+            text-align: center;
+            background: var(--accent-soft);
+            border: 1px solid #f0d59d;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .date-box .month {
+            background: var(--accent);
+            color: #1e2a22;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 5px 4px;
+        }
+
+        .date-box .day {
+            font-size: 26px;
+            font-weight: 800;
+            padding: 7px 4px 8px;
+        }
+
+        .event-title {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.25;
+        }
+
+        .lake {
+            color: var(--muted);
+            font-weight: 700;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .badge {
+            border-radius: 999px;
+            padding: 6px 9px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .badge.tournament {
+            background: #e7f3eb;
+            color: var(--success);
+        }
+
+        .badge.free {
+            background: #e8f2f8;
+            color: var(--blue);
+        }
+
+        .badge.educational {
+            background: #fff1d0;
+            color: #8a5a00;
+        }
+
+        .badge.public {
+            background: #edf7ed;
+            color: #2f7d4f;
+        }
+
+        .badge.private {
+            background: #fae8e8;
+            color: var(--danger);
+        }
+
+        .event-desc {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.45;
+            flex: 1;
+        }
+
+        .event-meta {
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+            color: var(--muted);
+            font-size: 13px;
+            display: grid;
+            gap: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--muted);
+            border: 1px dashed var(--border);
+            border-radius: 18px;
+            background: #fffdf8;
+        }
+
+        .loading {
+            color: var(--muted);
+            padding: 18px;
+        }
+
+        .footer-note {
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            padding: 20px;
+        }
+
+        @media (max-width: 1080px) {
+            .filters {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 920px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .events-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 620px) {
+            header {
+                padding-bottom: 36px;
+            }
+
+            .nav {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .summary-grid,
+            .filters,
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .panel-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="nav">
+                <div class="brand">
+                    <div class="brand-icon">🎣</div>
+                    <div class="brand-text">
+                        <strong>Tourney Farm</strong>
+                        <span>Iowa fishing tournament finder</span>
+                    </div>
+                </div>
+
+                <div class="status-pill" id="apiStatus">Checking API...</div>
+            </div>
+
+            <section class="hero">
+                <div>
+                    <h1>Know before you launch.</h1>
+                    <p>
+                        Find Iowa fishing tournaments, public events, and lakes reserved for non-tournament anglers.
+                        Search by lake, date, category, or check what is happening this weekend.
+                    </p>
+
+                    <div class="hero-actions">
+                        <button class="btn-primary" onclick="scrollToSearch()">Search Database</button>
+                        <button class="btn-secondary" onclick="loadWeekendEvents()">This Weekend</button>
+                        <button class="btn-secondary" onclick="loadCategory('Tournament-Free Lake')">Tournament-Free Lakes</button>
+                    </div>
+                </div>
+
+                <div class="hero-card">
+                    <h3>Built for quick fishing decisions</h3>
+                    <p>
+                        Tourney Farm helps anglers see where tournaments are happening, where lakes are reserved
+                        for non-tournament anglers, and what is coming up next.
+                    </p>
+                </div>
+            </section>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="summary-grid">
+                <div class="summary-card">
+                    <span>Total Events</span>
+                    <strong id="totalEvents">--</strong>
+                </div>
+
+                <div class="summary-card">
+                    <span>Tournaments</span>
+                    <strong id="tournamentCount">--</strong>
+                </div>
+
+                <div class="summary-card">
+                    <span>Tournament-Free Lakes</span>
+                    <strong id="freeLakeCount">--</strong>
+                </div>
+
+                <div class="summary-card">
+                    <span>Lakes Tracked</span>
+                    <strong id="lakeCount">--</strong>
+                </div>
+            </section>
+
+            <!-- DATABASE SEARCH IS NOW ABOVE WEEKEND EVENTS -->
+            <section class="panel" id="searchPanel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Search the database</h2>
+                        <p>Search by lake, category, public status, and date range.</p>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <div class="field">
+                        <label for="lakeSearch">Lake or location</label>
+                        <input id="lakeSearch" type="text" placeholder="Example: Lake Delhi" />
+                    </div>
+
+                    <div class="field">
+                        <label for="categoryFilter">Category</label>
+                        <select id="categoryFilter">
+                            <option value="">All categories</option>
+                            <option value="Tournament">Tournament</option>
+                            <option value="Tournament-Free Lake">Tournament-Free Lake</option>
+                            <option value="Educational Tournament">Educational Tournament</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="publicFilter">Public</label>
+                        <select id="publicFilter">
+                            <option value="">All</option>
+                            <option value="Yes">Public only</option>
+                            <option value="No">Private only</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="startDateFilter">Start date</label>
+                        <input id="startDateFilter" type="date" />
+                    </div>
+
+                    <div class="field">
+                        <label for="endDateFilter">End date</label>
+                        <input id="endDateFilter" type="date" />
+                    </div>
+
+                    <button class="btn-dark" onclick="searchEvents()">Search</button>
+                </div>
+
+                <div class="quick-filters">
+                    <button onclick="clearFilters()">Clear Filters</button>
+                    <button onclick="setNextSevenDays()">Next 7 Days</button>
+                    <button onclick="setNextThirtyDays()">Next 30 Days</button>
+                    <button onclick="loadCategory('Tournament')">All Tournaments</button>
+                    <button onclick="loadCategory('Tournament-Free Lake')">Tournament-Free Lakes</button>
+                </div>
+
+                <div style="margin-top: 18px;" id="searchSummary"></div>
+                <div id="searchResults" class="events-grid" style="margin-top: 14px;"></div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>What is happening this weekend?</h2>
+                        <p id="weekendDateRange">Loading upcoming weekend events...</p>
+                    </div>
+
+                    <button class="btn-primary" onclick="loadWeekendEvents()">Refresh Weekend</button>
+                </div>
+
+                <div class="section-tabs">
+                    <button class="tab active" id="tabWeekendAll" onclick="loadWeekendEvents()">All Weekend Events</button>
+                    <button class="tab" id="tabWeekendTournaments" onclick="loadWeekendCategory('Tournament')">Tournaments</button>
+                    <button class="tab" id="tabWeekendFree" onclick="loadWeekendCategory('Tournament-Free Lake')">Tournament-Free Lakes</button>
+                </div>
+
+                <div id="weekendEvents" class="events-grid">
+                    <div class="loading">Loading weekend events...</div>
+                </div>
+            </section>
+
+            <div class="footer-note">
+                Tourney Farm MVP running locally from FastAPI and SQLite.
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const apiBase = "";
+
+        function setApiStatus(text, good = true) {
+            const status = document.getElementById("apiStatus");
+            status.textContent = text;
+            status.style.background = good ? "rgba(255,255,255,0.14)" : "rgba(139,47,47,0.4)";
+        }
+
+        function scrollToSearch() {
+            document.getElementById("searchPanel").scrollIntoView({ behavior: "smooth" });
+        }
+
+        function setActiveWeekendTab(tabId) {
+            const tabs = ["tabWeekendAll", "tabWeekendTournaments", "tabWeekendFree"];
+
+            tabs.forEach(id => {
+                document.getElementById(id).classList.remove("active");
+            });
+
+            document.getElementById(tabId).classList.add("active");
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString + "T00:00:00");
+            return date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric"
+            });
+        }
+
+        function getDateParts(dateString) {
+            const date = new Date(dateString + "T00:00:00");
+
+            return {
+                month: date.toLocaleDateString("en-US", { month: "short" }).toUpperCase(),
+                day: date.getDate()
+            };
+        }
+
+        function getBadgeClass(category) {
+            if (category === "Tournament-Free Lake") {
+                return "free";
+            }
+
+            if (category === "Educational Tournament") {
+                return "educational";
+            }
+
+            return "tournament";
+        }
+
+        function renderEvents(targetId, events) {
+            const target = document.getElementById(targetId);
+
+            if (!events || events.length === 0) {
+                target.className = "";
+                target.innerHTML = `
+                    <div class="empty-state">
+                        <strong>No events found.</strong><br>
+                        Try changing the filter or checking a different lake/date.
+                    </div>
+                `;
+                return;
+            }
+
+            target.className = "events-grid";
+
+            target.innerHTML = events.map(event => {
+                const parts = getDateParts(event.event_date);
+                const badgeClass = getBadgeClass(event.event_category);
+                const publicClass = event.open_to_public === "Yes" ? "public" : "private";
+                const description = event.event_description || "No description provided.";
+                const phone = event.primary_phone ? `<div>Phone: ${event.primary_phone}</div>` : "";
+                const email = event.organization_email ? `<div>Email: ${event.organization_email}</div>` : "";
+                const organization = event.organization ? `<div>Organization: ${event.organization}</div>` : "";
+                const address = event.address ? `<div>Address: ${event.address}</div>` : "";
+
+                return `
+                    <article class="event-card">
+                        <div class="event-top">
+                            <div>
+                                <h3 class="event-title">${event.event_name}</h3>
+                                <div class="lake">${event.lake}</div>
+                            </div>
+
+                            <div class="date-box">
+                                <div class="month">${parts.month}</div>
+                                <div class="day">${parts.day}</div>
+                            </div>
+                        </div>
+
+                        <div class="badges">
+                            <span class="badge ${badgeClass}">${event.event_category}</span>
+                            <span class="badge ${publicClass}">${event.open_to_public === "Yes" ? "Public" : "Private"}</span>
+                        </div>
+
+                        <div class="event-desc">${description}</div>
+
+                        <div class="event-meta">
+                            <div>Date: ${formatDate(event.event_date)}</div>
+                            ${organization}
+                            ${phone}
+                            ${email}
+                            ${address}
+                        </div>
+                    </article>
+                `;
+            }).join("");
+        }
+
+        async function loadSummary() {
+            try {
+                const response = await fetch(`${apiBase}/summary`);
+                const data = await response.json();
+
+                document.getElementById("totalEvents").textContent = data.total_events;
+                document.getElementById("tournamentCount").textContent = data.tournaments;
+                document.getElementById("freeLakeCount").textContent = data.tournament_free_lakes;
+                document.getElementById("lakeCount").textContent = data.unique_lakes;
+
+                setApiStatus("API connected");
+            } catch (error) {
+                console.error(error);
+                setApiStatus("API not connected", false);
+            }
+        }
+
+        async function loadWeekendEvents() {
+            setActiveWeekendTab("tabWeekendAll");
+
+            const target = document.getElementById("weekendEvents");
+            target.className = "";
+            target.innerHTML = `<div class="loading">Loading weekend events...</div>`;
+
+            try {
+                const response = await fetch(`${apiBase}/events/weekend`);
+                const data = await response.json();
+
+                document.getElementById("weekendDateRange").textContent =
+                    `${formatDate(data.start_date)} through ${formatDate(data.end_date)} · ${data.count} events found`;
+
+                renderEvents("weekendEvents", data.events);
+            } catch (error) {
+                console.error(error);
+                target.innerHTML = `<div class="empty-state">Could not load weekend events.</div>`;
+            }
+        }
+
+        async function loadWeekendCategory(category) {
+            if (category === "Tournament") {
+                setActiveWeekendTab("tabWeekendTournaments");
+            } else {
+                setActiveWeekendTab("tabWeekendFree");
+            }
+
+            const target = document.getElementById("weekendEvents");
+            target.className = "";
+            target.innerHTML = `<div class="loading">Loading ${category} events...</div>`;
+
+            try {
+                const response = await fetch(`${apiBase}/events/weekend?category=${encodeURIComponent(category)}`);
+                const data = await response.json();
+
+                document.getElementById("weekendDateRange").textContent =
+                    `${formatDate(data.start_date)} through ${formatDate(data.end_date)} · ${data.count} ${category} events found`;
+
+                renderEvents("weekendEvents", data.events);
+            } catch (error) {
+                console.error(error);
+                target.innerHTML = `<div class="empty-state">Could not load weekend events.</div>`;
+            }
+        }
+
+        async function loadCategory(category) {
+            document.getElementById("categoryFilter").value = category;
+            document.getElementById("lakeSearch").value = "";
+            document.getElementById("publicFilter").value = "";
+            document.getElementById("startDateFilter").value = "";
+            document.getElementById("endDateFilter").value = "";
+
+            await searchEvents();
+            document.getElementById("searchResults").scrollIntoView({ behavior: "smooth" });
+        }
+
+        function clearFilters() {
+            document.getElementById("lakeSearch").value = "";
+            document.getElementById("categoryFilter").value = "";
+            document.getElementById("publicFilter").value = "";
+            document.getElementById("startDateFilter").value = "";
+            document.getElementById("endDateFilter").value = "";
+
+            document.getElementById("searchSummary").innerHTML = "";
+            document.getElementById("searchResults").innerHTML = "";
+        }
+
+        function toInputDate(date) {
+            return date.toISOString().split("T")[0];
+        }
+
+        function setNextSevenDays() {
+            const today = new Date();
+            const end = new Date();
+
+            end.setDate(today.getDate() + 7);
+
+            document.getElementById("startDateFilter").value = toInputDate(today);
+            document.getElementById("endDateFilter").value = toInputDate(end);
+
+            searchEvents();
+        }
+
+        function setNextThirtyDays() {
+            const today = new Date();
+            const end = new Date();
+
+            end.setDate(today.getDate() + 30);
+
+            document.getElementById("startDateFilter").value = toInputDate(today);
+            document.getElementById("endDateFilter").value = toInputDate(end);
+
+            searchEvents();
+        }
+
+        async function searchEvents() {
+            const lake = document.getElementById("lakeSearch").value.trim();
+            const category = document.getElementById("categoryFilter").value;
+            const publicValue = document.getElementById("publicFilter").value;
+            const startDate = document.getElementById("startDateFilter").value;
+            const endDate = document.getElementById("endDateFilter").value;
+
+            const params = new URLSearchParams();
+
+            if (lake) {
+                params.append("lake", lake);
+            }
+
+            if (category) {
+                params.append("category", category);
+            }
+
+            if (publicValue) {
+                params.append("public", publicValue);
+            }
+
+            if (startDate) {
+                params.append("start_date", startDate);
+            }
+
+            if (endDate) {
+                params.append("end_date", endDate);
+            }
+
+            const queryString = params.toString();
+            const url = queryString ? `${apiBase}/events?${queryString}` : `${apiBase}/events`;
+
+            const summary = document.getElementById("searchSummary");
+            const target = document.getElementById("searchResults");
+
+            summary.innerHTML = "";
+            target.className = "";
+            target.innerHTML = `<div class="loading">Searching events...</div>`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                let searchText = `<strong>${data.count}</strong> events found`;
+
+                if (startDate || endDate) {
+                    searchText += ` · Date range: ${startDate || "Any"} to ${endDate || "Any"}`;
+                }
+
+                if (lake) {
+                    searchText += ` · Lake/location: ${lake}`;
+                }
+
+                if (category) {
+                    searchText += ` · Category: ${category}`;
+                }
+
+                summary.innerHTML = searchText;
+
+                renderEvents("searchResults", data.events);
+            } catch (error) {
+                console.error(error);
+                target.innerHTML = `<div class="empty-state">Search failed. Check that your API is running.</div>`;
+            }
+        }
+
+        loadSummary();
+        loadWeekendEvents();
+    </script>
+</body>
+</html>
