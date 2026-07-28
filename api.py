@@ -13,13 +13,20 @@ def get_database_connection():
 
 
 @app.get("/")
-def home():
+def site():
+    return FileResponse("static/index.html")
+
+
+@app.get("/site")
+def site_alt():
+    return FileResponse("static/index.html")
+
+
+@app.get("/api/status")
+def api_status():
     return {
         "message": "Iowa Tournament API is running"
     }
-@app.get("/site")
-def site():
-    return FileResponse("static/index.html")
 
 @app.get("/summary")
 def get_summary():
