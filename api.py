@@ -1,4 +1,5 @@
 import sqlite3
+import requests
 from datetime import date, timedelta
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
@@ -10,6 +11,94 @@ def get_database_connection():
     connection = sqlite3.connect("iowa_tournaments.db")
     connection.row_factory = sqlite3.Row
     return connection
+
+
+def weather_code_to_text(code):
+    weather_codes = {
+        0: "Clear",
+        1: "Mostly clear",
+        2: "Partly cloudy",
+        3: "Cloudy",
+        45: "Fog",
+        48: "Freezing fog",
+        51: "Light drizzle",
+        53: "Drizzle",
+        55: "Heavy drizzle",
+        61: "Light rain",
+        63: "Rain",
+        65: "Heavy rain",
+        71: "Light snow",
+        73: "Snow",
+        75: "Heavy snow",
+        80: "Light showers",
+        81: "Showers",
+        82: "Heavy showers",
+        95: "Thunderstorms",
+        96: "Thunderstorms with hail",
+        99: "Severe thunderstorms with hail"
+    }
+
+    return weather_codes.get(code, "Unknown")
+
+
+def get_weather_for_event(latitude, longitude, event_date):
+    if latitude is None or longitude is None or event_date is None:
+        return None
+
+    weather_url = "https://api.open-meteo.com/v1/forecast"
+
+    params = {
+        "latitude": latitude,
+        "longitude": longitude,
+        "hourly": "temperature_2m,wind_speed_10m,weather_code",
+        "temperature_unit": "fahrenheit",
+        "wind_speed_unit": "mph",
+        "timezone": "America/Chicago",
+        "forecast_days": 16
+    }
+
+    try:
+        response = requests.get(weather_url, params=params, timeout=10)
+
+        if response.status_code != 200:
+            return None
+
+        data = response.json()
+
+        hourly = data.get("hourly", {})
+        times = hourly.get("time", [])
+        temperatures = hourly.get("temperature_2m", [])
+        winds = hourly.get("wind_speed_10m", [])
+        weather_codes = hourly.get("weather_code", [])
+
+        preferred_time = f"{event_date}T12:00"
+
+        if preferred_time in times:
+            index = times.index(preferred_time)
+        else:
+            matching_indexes = [
+                i for i, forecast_time in enumerate(times)
+                if forecast_time.startswith(event_date)
+            ]
+
+            if not matching_indexes:
+                return None
+
+            index = matching_indexes[0]
+
+        weather_code = weather_codes[index]
+
+        return {
+            "temperature": temperatures[index],
+            "wind_speed": winds[index],
+            "weather_code": weather_code,
+            "weather": weather_code_to_text(weather_code),
+            "forecast_time": times[index]
+        }
+
+    except Exception as e:
+        print(f"Weather lookup failed: {e}")
+        return None
 
 
 @app.get("/")
@@ -27,6 +116,7 @@ def api_status():
     return {
         "message": "Iowa Tournament API is running"
     }
+
 
 @app.get("/summary")
 def get_summary():
@@ -121,8 +211,6 @@ def get_weekend_events(
 ):
     today = date.today()
 
-    # Monday = 0, Tuesday = 1, Wednesday = 2,
-    # Thursday = 3, Friday = 4, Saturday = 5, Sunday = 6
     days_until_saturday = (5 - today.weekday()) % 7
 
     saturday = today + timedelta(days=days_until_saturday)
@@ -177,7 +265,20 @@ def get_weekend_events(
     rows = cursor.fetchall()
     connection.close()
 
-    events = [dict(row) for row in rows]
+    events = []
+
+    for row in rows:
+        event = dict(row)
+
+        weather = get_weather_for_event(
+            event.get("latitude"),
+            event.get("longitude"),
+            event.get("event_date")
+        )
+
+        event["weather"] = weather
+
+        events.append(event)
 
     return {
         "start_date": start_date,
