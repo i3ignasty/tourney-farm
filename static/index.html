@@ -742,16 +742,7 @@
                 const email = event.organization_email ? `<div>Email: ${event.organization_email}</div>` : "";
                 const organization = event.organization ? `<div>Organization: ${event.organization}</div>` : "";
                 const address = event.address ? `<div>Address: ${event.address}</div>` : "";
-                let weatherLine = "";
-
-                if (event.weather) {
-                    weatherLine = `
-                        <div>Weather: ${event.weather.weather}</div>
-                        <div>Temp: ${Math.round(event.weather.temperature)}°F</div>
-                        <div>Wind: ${Math.round(event.weather.wind_speed)} mph</div>
-                    `;
-                }
-
+                
                 return `
                     <article class="event-card">
                         <div class="event-top">
@@ -774,13 +765,13 @@
                         <div class="event-desc">${description}</div>
 
                         <div class="event-meta">
-                            <div>Date: ${formatDate(event.event_date)}</div>
-                                ${weatherLine}
-                                ${organization}
-                                ${phone}
-                                ${email}
-                                ${address}
-                            </div>
+                            <div class="event-meta">
+                        <div>Date: ${formatDate(event.event_date)}</div>
+                            ${organization}
+                            ${phone}
+                            ${email}
+                            ${address}
+                        </div>
                     </article>
                 `;
             }).join("");
