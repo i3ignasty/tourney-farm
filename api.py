@@ -186,10 +186,8 @@ def refresh_events():
     """
     Manually runs scrape_to_database.py.
 
-    You can test this from:
-    https://tourney-farm.onrender.com/docs
-
-    Later, a Render Cron Job can call this endpoint weekly.
+    This is intentionally unsecured for now so we can prove the recurring
+    data refresh works first.
     """
 
     try:
