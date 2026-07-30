@@ -441,6 +441,19 @@
             gap: 5px;
         }
 
+        .weather-block {
+            margin: 8px 0;
+            padding: 9px 10px;
+            border-radius: 10px;
+            background: rgba(245, 158, 11, 0.10);
+            border: 1px solid rgba(245, 158, 11, 0.22);
+            color: #fef3c7;
+        }
+
+        .weather-block strong {
+            color: var(--primary-light);
+        }
+
         .empty-state {
             text-align: center;
             padding: 36px 20px;
@@ -538,7 +551,7 @@
 
                     <div class="hero-actions">
                         <button class="btn-primary" onclick="scrollToSearch()">Search Database</button>
-                        <button class="btn-secondary" onclick="loadWeekendEvents()">This Weekend</button>
+                        <button class="btn-secondary" onclick="scrollToWeekend()">This Weekend</button>
                         <button class="btn-secondary" onclick="loadCategory('Tournament-Free Lake')">Tournament-Free Lakes</button>
                     </div>
                 </div>
@@ -636,7 +649,7 @@
                 <div id="searchResults" class="events-grid" style="margin-top: 14px;"></div>
             </section>
 
-            <section class="panel">
+            <section class="panel" id="weekendSection">
                 <div class="panel-header">
                     <div>
                         <h2>What is happening this weekend?</h2>
@@ -677,6 +690,11 @@
             document.getElementById("searchPanel").scrollIntoView({ behavior: "smooth" });
         }
 
+        function scrollToWeekend() {
+            loadWeekendEvents();
+            document.getElementById("weekendSection").scrollIntoView({ behavior: "smooth" });
+        }
+
         function setActiveWeekendTab(tabId) {
             const tabs = ["tabWeekendAll", "tabWeekendTournaments", "tabWeekendFree"];
 
@@ -689,6 +707,7 @@
 
         function formatDate(dateString) {
             const date = new Date(dateString + "T00:00:00");
+
             return date.toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
@@ -720,6 +739,11 @@
         function renderEvents(targetId, events) {
             const target = document.getElementById(targetId);
 
+            if (!target) {
+                console.error("Target element not found:", targetId);
+                return;
+            }
+
             if (!events || events.length === 0) {
                 target.className = "";
                 target.innerHTML = `
@@ -737,12 +761,35 @@
                 const parts = getDateParts(event.event_date);
                 const badgeClass = getBadgeClass(event.event_category);
                 const publicClass = event.open_to_public === "Yes" ? "public" : "private";
+
                 const description = event.event_description || "No description provided.";
                 const phone = event.primary_phone ? `<div>Phone: ${event.primary_phone}</div>` : "";
                 const email = event.organization_email ? `<div>Email: ${event.organization_email}</div>` : "";
                 const organization = event.organization ? `<div>Organization: ${event.organization}</div>` : "";
                 const address = event.address ? `<div>Address: ${event.address}</div>` : "";
-                
+
+                let weatherLine = "";
+
+                if (event.weather && typeof event.weather === "object") {
+                    const condition = event.weather.weather || "Weather unavailable";
+
+                    const temp = event.weather.temperature !== null && event.weather.temperature !== undefined
+                        ? `${Math.round(event.weather.temperature)}°F`
+                        : "Unavailable";
+
+                    const wind = event.weather.wind_speed !== null && event.weather.wind_speed !== undefined
+                        ? `${Math.round(event.weather.wind_speed)} mph`
+                        : "Unavailable";
+
+                    weatherLine = `
+                        <div class="weather-block">
+                            <div><strong>Forecast:</strong> ${condition}</div>
+                            <div><strong>Temp:</strong> ${temp}</div>
+                            <div><strong>Wind:</strong> ${wind}</div>
+                        </div>
+                    `;
+                }
+
                 return `
                     <article class="event-card">
                         <div class="event-top">
@@ -759,14 +806,16 @@
 
                         <div class="badges">
                             <span class="badge ${badgeClass}">${event.event_category}</span>
-                            <span class="badge ${publicClass}">${event.open_to_public === "Yes" ? "Public" : "Private"}</span>
+                            <span class="badge ${publicClass}">
+                                ${event.open_to_public === "Yes" ? "Public" : "Private"}
+                            </span>
                         </div>
 
                         <div class="event-desc">${description}</div>
 
                         <div class="event-meta">
-                            <div class="event-meta">
-                        <div>Date: ${formatDate(event.event_date)}</div>
+                            <div>Date: ${formatDate(event.event_date)}</div>
+                            ${weatherLine}
                             ${organization}
                             ${phone}
                             ${email}
