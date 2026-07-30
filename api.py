@@ -1,8 +1,10 @@
 import sqlite3
 import requests
+import subprocess
 from datetime import date, timedelta
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
+
 
 app = FastAPI()
 
@@ -51,7 +53,6 @@ def get_weather_for_event(latitude, longitude, event_date, debug=False):
                 "longitude": longitude,
                 "event_date": event_date
             }
-
         return None
 
     weather_url = "https://api.open-meteo.com/v1/forecast"
@@ -82,7 +83,6 @@ def get_weather_for_event(latitude, longitude, event_date, debug=False):
                     "response_text": response.text[:500],
                     "request_url": response.url
                 }
-
             return None
 
         data = response.json()
@@ -101,7 +101,6 @@ def get_weather_for_event(latitude, longitude, event_date, debug=False):
                     "response_keys": list(data.keys()),
                     "request_url": response.url
                 }
-
             return None
 
         preferred_time = f"{event_date}T12:00"
@@ -124,7 +123,6 @@ def get_weather_for_event(latitude, longitude, event_date, debug=False):
                         "last_forecast_time": times[-1],
                         "request_url": response.url
                     }
-
                 return None
 
             index = matching_indexes[0]
@@ -183,6 +181,45 @@ def api_status():
     }
 
 
+@app.post("/admin/refresh")
+def refresh_events():
+    """
+    Manually runs scrape_to_database.py.
+
+    You can test this from:
+    https://tourney-farm.onrender.com/docs
+
+    Later, a Render Cron Job can call this endpoint weekly.
+    """
+
+    try:
+        result = subprocess.run(
+            ["python", "scrape_to_database.py"],
+            capture_output=True,
+            text=True,
+            timeout=600
+        )
+
+        return {
+            "success": result.returncode == 0,
+            "return_code": result.returncode,
+            "output": result.stdout,
+            "errors": result.stderr
+        }
+
+    except subprocess.TimeoutExpired:
+        return {
+            "success": False,
+            "error": "Scraper timed out after 10 minutes."
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
 @app.get("/summary")
 def get_summary():
     connection = get_database_connection()
@@ -192,29 +229,29 @@ def get_summary():
     total_events = cursor.fetchone()[0]
 
     cursor.execute("""
-    SELECT COUNT(*)
-    FROM events
-    WHERE event_category = 'Tournament'
+        SELECT COUNT(*)
+        FROM events
+        WHERE event_category = 'Tournament'
     """)
     tournaments = cursor.fetchone()[0]
 
     cursor.execute("""
-    SELECT COUNT(*)
-    FROM events
-    WHERE event_category = 'Tournament-Free Lake'
+        SELECT COUNT(*)
+        FROM events
+        WHERE event_category = 'Tournament-Free Lake'
     """)
     tournament_free_lakes = cursor.fetchone()[0]
 
     cursor.execute("""
-    SELECT COUNT(*)
-    FROM events
-    WHERE event_category = 'Educational Tournament'
+        SELECT COUNT(*)
+        FROM events
+        WHERE event_category = 'Educational Tournament'
     """)
     educational_tournaments = cursor.fetchone()[0]
 
     cursor.execute("""
-    SELECT COUNT(DISTINCT lake)
-    FROM events
+        SELECT COUNT(DISTINCT lake)
+        FROM events
     """)
     unique_lakes = cursor.fetchone()[0]
 
@@ -235,12 +272,12 @@ def get_categories():
     cursor = connection.cursor()
 
     cursor.execute("""
-    SELECT
-        event_category,
-        COUNT(*) AS event_count
-    FROM events
-    GROUP BY event_category
-    ORDER BY event_count DESC
+        SELECT
+            event_category,
+            COUNT(*) AS event_count
+        FROM events
+        GROUP BY event_category
+        ORDER BY event_count DESC
     """)
 
     rows = cursor.fetchall()
@@ -255,12 +292,12 @@ def get_lakes():
     cursor = connection.cursor()
 
     cursor.execute("""
-    SELECT
-        lake,
-        COUNT(*) AS event_count
-    FROM events
-    GROUP BY lake
-    ORDER BY lake
+        SELECT
+            lake,
+            COUNT(*) AS event_count
+        FROM events
+        GROUP BY lake
+        ORDER BY lake
     """)
 
     rows = cursor.fetchall()
@@ -290,29 +327,29 @@ def get_weekend_events(
     cursor = connection.cursor()
 
     query = """
-    SELECT
-        event_id,
-        event_name,
-        event_type,
-        event_category,
-        event_date,
-        lake,
-        open_to_public,
-        status,
-        latitude,
-        longitude,
-        event_description,
-        event_date_time,
-        detail_location,
-        address,
-        organization,
-        primary_phone,
-        organization_email,
-        web_address,
-        last_updated
-    FROM events
-    WHERE event_date >= ?
-      AND event_date <= ?
+        SELECT
+            event_id,
+            event_name,
+            event_type,
+            event_category,
+            event_date,
+            lake,
+            open_to_public,
+            status,
+            latitude,
+            longitude,
+            event_description,
+            event_date_time,
+            detail_location,
+            address,
+            organization,
+            primary_phone,
+            organization_email,
+            web_address,
+            last_updated
+        FROM events
+        WHERE event_date >= ?
+          AND event_date <= ?
     """
 
     params = [start_date, end_date]
@@ -328,7 +365,6 @@ def get_weekend_events(
     query += " ORDER BY event_date, lake"
 
     cursor.execute(query, params)
-
     rows = cursor.fetchall()
     connection.close()
 
@@ -357,7 +393,7 @@ def get_weekend_events(
 def debug_weather(
     latitude: float = 42.4094814528,
     longitude: float = -91.3884579644,
-    event_date: str = None
+    event_date: str | None = None
 ):
     if event_date is None:
         today = date.today()
@@ -387,28 +423,28 @@ def get_events(
     cursor = connection.cursor()
 
     query = """
-    SELECT
-        event_id,
-        event_name,
-        event_type,
-        event_category,
-        event_date,
-        lake,
-        open_to_public,
-        status,
-        latitude,
-        longitude,
-        event_description,
-        event_date_time,
-        detail_location,
-        address,
-        organization,
-        primary_phone,
-        organization_email,
-        web_address,
-        last_updated
-    FROM events
-    WHERE 1 = 1
+        SELECT
+            event_id,
+            event_name,
+            event_type,
+            event_category,
+            event_date,
+            lake,
+            open_to_public,
+            status,
+            latitude,
+            longitude,
+            event_description,
+            event_date_time,
+            detail_location,
+            address,
+            organization,
+            primary_phone,
+            organization_email,
+            web_address,
+            last_updated
+        FROM events
+        WHERE 1 = 1
     """
 
     params = []
@@ -439,10 +475,9 @@ def get_events(
         query += " AND event_date <= ?"
         params.append(end_date)
 
-    query += " ORDER BY event_date"
+    query += " ORDER BY event_date, lake"
 
     cursor.execute(query, params)
-
     rows = cursor.fetchall()
     connection.close()
 
@@ -460,28 +495,28 @@ def get_event_by_id(event_id: int):
     cursor = connection.cursor()
 
     cursor.execute("""
-    SELECT
-        event_id,
-        event_name,
-        event_type,
-        event_category,
-        event_date,
-        lake,
-        open_to_public,
-        status,
-        latitude,
-        longitude,
-        event_description,
-        event_date_time,
-        detail_location,
-        address,
-        organization,
-        primary_phone,
-        organization_email,
-        web_address,
-        last_updated
-    FROM events
-    WHERE event_id = ?
+        SELECT
+            event_id,
+            event_name,
+            event_type,
+            event_category,
+            event_date,
+            lake,
+            open_to_public,
+            status,
+            latitude,
+            longitude,
+            event_description,
+            event_date_time,
+            detail_location,
+            address,
+            organization,
+            primary_phone,
+            organization_email,
+            web_address,
+            last_updated
+        FROM events
+        WHERE event_id = ?
     """, (event_id,))
 
     row = cursor.fetchone()
