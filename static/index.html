@@ -47,7 +47,7 @@
                     #1f2937 100%
                 );
             color: white;
-            padding: 34px 20px 44px;
+            padding: 34px 20px 52px;
             border-bottom: 1px solid rgba(245, 158, 11, 0.22);
         }
 
@@ -189,34 +189,6 @@
         main {
             margin-top: -28px;
             padding: 0 20px 60px;
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 22px;
-        }
-
-        .summary-card {
-            background: linear-gradient(180deg, var(--card-light), var(--card));
-            border: 1px solid rgba(245, 158, 11, 0.16);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .summary-card span {
-            display: block;
-            color: var(--muted);
-            font-size: 13px;
-            margin-bottom: 8px;
-        }
-
-        .summary-card strong {
-            font-size: 32px;
-            line-height: 1;
-            color: var(--primary-light);
         }
 
         .panel {
@@ -494,10 +466,6 @@
                 grid-template-columns: 1fr;
             }
 
-            .summary-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
             .events-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -513,7 +481,6 @@
                 flex-direction: column;
             }
 
-            .summary-grid,
             .filters,
             .events-grid {
                 grid-template-columns: 1fr;
@@ -569,33 +536,12 @@
 
     <main>
         <div class="container">
-            <section class="summary-grid">
-                <div class="summary-card">
-                    <span>Total Events</span>
-                    <strong id="totalEvents">--</strong>
-                </div>
-
-                <div class="summary-card">
-                    <span>Tournaments</span>
-                    <strong id="tournamentCount">--</strong>
-                </div>
-
-                <div class="summary-card">
-                    <span>Tournament-Free Lakes</span>
-                    <strong id="freeLakeCount">--</strong>
-                </div>
-
-                <div class="summary-card">
-                    <span>Lakes Tracked</span>
-                    <strong id="lakeCount">--</strong>
-                </div>
-            </section>
 
             <section class="panel" id="searchPanel">
                 <div class="panel-header">
                     <div>
                         <h2>Search the database</h2>
-                        <p>Search by lake, category, public status, and date range.</p>
+                        <p>Search by lake, category, public status, and date range. Results default to upcoming events.</p>
                     </div>
                 </div>
 
@@ -826,15 +772,13 @@
             }).join("");
         }
 
-        async function loadSummary() {
+        async function checkApiStatus() {
             try {
-                const response = await fetch(`${apiBase}/summary`);
-                const data = await response.json();
+                const response = await fetch(`${apiBase}/api/status`);
 
-                document.getElementById("totalEvents").textContent = data.total_events;
-                document.getElementById("tournamentCount").textContent = data.tournaments;
-                document.getElementById("freeLakeCount").textContent = data.tournament_free_lakes;
-                document.getElementById("lakeCount").textContent = data.unique_lakes;
+                if (!response.ok) {
+                    throw new Error("API status failed");
+                }
 
                 setApiStatus("API connected");
             } catch (error) {
@@ -1031,7 +975,7 @@
             }
         });
 
-        loadSummary();
+        checkApiStatus();
         loadWeekendEvents();
     </script>
 </body>
