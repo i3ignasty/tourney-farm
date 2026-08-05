@@ -235,7 +235,8 @@
             font-weight: 700;
         }
 
-        input, select {
+        input,
+        select {
             width: 100%;
             border: 1px solid var(--border);
             background: #111827;
@@ -250,7 +251,8 @@
             color: #6b7280;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
         }
@@ -326,12 +328,12 @@
         }
 
         .date-box .weekday {
-                font-size: 11px;
-                font-weight: 700;
-                color: #9ca3af;
-                padding-bottom: 8px;
-                letter-spacing: 0.5px;
-            }
+            font-size: 11px;
+            font-weight: 700;
+            color: #9ca3af;
+            padding-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
 
         .date-box .month {
             background: linear-gradient(135deg, var(--primary), var(--accent));
@@ -434,6 +436,113 @@
             color: var(--primary-light);
         }
 
+        .mobile-card-layout {
+            display: none;
+        }
+
+        .mobile-event-header {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: start;
+        }
+
+        .mobile-event-title {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.25;
+            color: var(--text);
+            font-weight: 800;
+        }
+
+        .mobile-event-date {
+            color: #fef3c7;
+            font-size: 13px;
+            font-weight: 800;
+            white-space: nowrap;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 999px;
+            padding: 5px 8px;
+        }
+
+        .mobile-lake {
+            color: #d1d5db;
+            font-weight: 700;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .mobile-subline {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 4px;
+            line-height: 1.35;
+        }
+
+        .mobile-chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+            align-items: center;
+        }
+
+        .mobile-chip {
+            border-radius: 999px;
+            padding: 5px 8px;
+            font-size: 11px;
+            font-weight: 800;
+            border: 1px solid var(--border);
+            background: rgba(31, 41, 55, 0.85);
+            color: #d1d5db;
+        }
+
+        .mobile-weather {
+            margin-top: 8px;
+            padding: 8px 9px;
+            border-radius: 10px;
+            background: rgba(245, 158, 11, 0.10);
+            border: 1px solid rgba(245, 158, 11, 0.22);
+            color: #fef3c7;
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        .mobile-details {
+            margin-top: 8px;
+            border-top: 1px solid var(--border);
+            padding-top: 8px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .mobile-details summary {
+            cursor: pointer;
+            color: var(--primary-light);
+            font-weight: 800;
+            list-style: none;
+        }
+
+        .mobile-details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .mobile-details summary::after {
+            content: " +";
+        }
+
+        .mobile-details[open] summary::after {
+            content: " -";
+        }
+
+        .mobile-details-content {
+            display: grid;
+            gap: 5px;
+            margin-top: 8px;
+            line-height: 1.35;
+        }
+
         .empty-state {
             text-align: center;
             padding: 36px 20px;
@@ -481,12 +590,47 @@
 
         @media (max-width: 620px) {
             header {
-                padding-bottom: 36px;
+                padding: 24px 16px 38px;
+            }
+
+            main {
+                padding: 0 10px 44px;
             }
 
             .nav {
                 align-items: flex-start;
                 flex-direction: column;
+                margin-bottom: 26px;
+            }
+
+            .brand-icon {
+                width: 38px;
+                height: 38px;
+                font-size: 21px;
+            }
+
+            .brand-text strong {
+                font-size: 22px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 15px;
+                margin: 14px 0 20px;
+            }
+
+            .hero-card {
+                padding: 16px;
+                border-radius: 18px;
+            }
+
+            .hero-actions button,
+            .quick-filters button,
+            .section-tabs button {
+                width: 100%;
             }
 
             .filters,
@@ -494,8 +638,32 @@
                 grid-template-columns: 1fr;
             }
 
+            .panel {
+                padding: 15px;
+                border-radius: 18px;
+            }
+
             .panel-header {
                 flex-direction: column;
+            }
+
+            .panel-header h2 {
+                font-size: 22px;
+            }
+
+            .event-card {
+                min-height: 0;
+                padding: 12px;
+                border-radius: 14px;
+                gap: 0;
+            }
+
+            .desktop-card-layout {
+                display: none;
+            }
+
+            .mobile-card-layout {
+                display: block;
             }
         }
     </style>
@@ -512,7 +680,6 @@
                         <span>Iowa fishing tournament finder</span>
                     </div>
                 </div>
-
                 <div class="status-pill" id="apiStatus">Checking API...</div>
             </div>
 
@@ -523,7 +690,6 @@
                         Find Iowa fishing tournaments, public events, and lakes reserved for non-tournament anglers.
                         Search by lake, date, category, or check what is happening this weekend.
                     </p>
-
                     <div class="hero-actions">
                         <button class="btn-primary" onclick="scrollToSearch()">Search Database</button>
                         <button class="btn-secondary" onclick="scrollToWeekend()">This Weekend</button>
@@ -544,7 +710,6 @@
 
     <main>
         <div class="container">
-
             <section class="panel" id="searchPanel">
                 <div class="panel-header">
                     <div>
@@ -609,7 +774,6 @@
                         <h2>What is happening this weekend?</h2>
                         <p id="weekendDateRange">Loading upcoming weekend events...</p>
                     </div>
-
                     <button class="btn-primary" onclick="loadWeekendEvents()">Refresh Weekend</button>
                 </div>
 
@@ -651,17 +815,14 @@
 
         function setActiveWeekendTab(tabId) {
             const tabs = ["tabWeekendAll", "tabWeekendTournaments", "tabWeekendFree"];
-
             tabs.forEach(id => {
                 document.getElementById(id).classList.remove("active");
             });
-
             document.getElementById(tabId).classList.add("active");
         }
 
         function formatDate(dateString) {
             const date = new Date(dateString + "T00:00:00");
-
             return date.toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
@@ -669,21 +830,26 @@
             });
         }
 
+        function formatShortDate(dateString) {
+            const date = new Date(dateString + "T00:00:00");
+            return date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric"
+            });
+        }
+
         function getDateParts(dateString) {
-    const date = new Date(dateString + "T00:00:00");
-
-    return {
-        month: date.toLocaleDateString("en-US", {
-            month: "short"
-        }).toUpperCase(),
-
-        day: date.getDate(),
-
-        weekday: date.toLocaleDateString("en-US", {
-            weekday: "short"
-        }).toUpperCase()
-    };
-}
+            const date = new Date(dateString + "T00:00:00");
+            return {
+                month: date.toLocaleDateString("en-US", {
+                    month: "short"
+                }).toUpperCase(),
+                day: date.getDate(),
+                weekday: date.toLocaleDateString("en-US", {
+                    weekday: "short"
+                }).toUpperCase()
+            };
+        }
 
         function getBadgeClass(category) {
             if (category === "Tournament-Free Lake") {
@@ -695,6 +861,18 @@
             }
 
             return "tournament";
+        }
+
+        function getShortCategory(category) {
+            if (category === "Tournament-Free Lake") {
+                return "Free Lake";
+            }
+
+            if (category === "Educational Tournament") {
+                return "Educational";
+            }
+
+            return "Tournament";
         }
 
         function renderEvents(targetId, events) {
@@ -722,25 +900,29 @@
                 const parts = getDateParts(event.event_date);
                 const badgeClass = getBadgeClass(event.event_category);
                 const publicClass = event.open_to_public === "Yes" ? "public" : "private";
+                const publicLabel = event.open_to_public === "Yes" ? "Public" : "Private";
+                const shortCategory = getShortCategory(event.event_category);
 
                 const description = event.event_description || "No description provided.";
                 const phone = event.primary_phone ? `<div>Phone: ${event.primary_phone}</div>` : "";
                 const email = event.organization_email ? `<div>Email: ${event.organization_email}</div>` : "";
                 const organization = event.organization ? `<div>Organization: ${event.organization}</div>` : "";
+                const organizationShort = event.organization || "Organization not listed";
                 const address = event.address ? `<div>Address: ${event.address}</div>` : "";
 
                 let weatherLine = "";
+                let mobileWeatherLine = "";
 
                 if (event.weather && typeof event.weather === "object") {
                     const condition = event.weather.weather || "Weather unavailable";
 
                     const temp = event.weather.temperature !== null && event.weather.temperature !== undefined
                         ? `${Math.round(event.weather.temperature)}°F`
-                        : "Unavailable";
+                        : "Temp unavailable";
 
                     const wind = event.weather.wind_speed !== null && event.weather.wind_speed !== undefined
-                        ? `${Math.round(event.weather.wind_speed)} mph`
-                        : "Unavailable";
+                        ? `${Math.round(event.weather.wind_speed)} mph wind`
+                        : "Wind unavailable";
 
                     weatherLine = `
                         <div class="weather-block">
@@ -749,40 +931,84 @@
                             <div><strong>Wind:</strong> ${wind}</div>
                         </div>
                     `;
+
+                    mobileWeatherLine = `
+                        <div class="mobile-weather">
+                            ${condition} • ${temp} • ${wind}
+                        </div>
+                    `;
+                } else {
+                    mobileWeatherLine = `
+                        <div class="mobile-weather">
+                            Weather unavailable
+                        </div>
+                    `;
                 }
 
                 return `
                     <article class="event-card">
-                        <div class="event-top">
-                            <div>
-                                <h3 class="event-title">${event.event_name}</h3>
-                                <div class="lake">${event.lake}</div>
+
+                        <div class="desktop-card-layout">
+                            <div class="event-top">
+                                <div>
+                                    <h3 class="event-title">${event.event_name}</h3>
+                                    <div class="lake">${event.lake}</div>
+                                </div>
+
+                                <div class="date-box">
+                                    <div class="month">${parts.month}</div>
+                                    <div class="day">${parts.day}</div>
+                                    <div class="weekday">${parts.weekday}</div>
+                                </div>
                             </div>
 
-                            <div class="date-box">
-                                <div class="month">${parts.month}</div>
-                                <div class="day">${parts.day}</div>
-                                <div class="weekday">${parts.weekday}</div>
+                            <div class="badges">
+                                <span class="badge ${badgeClass}">${event.event_category}</span>
+                                <span class="badge ${publicClass}">${publicLabel}</span>
+                            </div>
+
+                            <div class="event-desc">${description}</div>
+
+                            <div class="event-meta">
+                                <div>Date: ${formatDate(event.event_date)}</div>
+                                ${weatherLine}
+                                ${organization}
+                                ${phone}
+                                ${email}
+                                ${address}
                             </div>
                         </div>
 
-                        <div class="badges">
-                            <span class="badge ${badgeClass}">${event.event_category}</span>
-                            <span class="badge ${publicClass}">
-                                ${event.open_to_public === "Yes" ? "Public" : "Private"}
-                            </span>
+                        <div class="mobile-card-layout">
+                            <div class="mobile-event-header">
+                                <div>
+                                    <h3 class="mobile-event-title">${event.event_name}</h3>
+                                    <div class="mobile-lake">${event.lake}</div>
+                                    <div class="mobile-subline">${organizationShort}</div>
+                                </div>
+
+                                <div class="mobile-event-date">${formatShortDate(event.event_date)}</div>
+                            </div>
+
+                            <div class="mobile-chip-row">
+                                <span class="mobile-chip">${shortCategory}</span>
+                                <span class="mobile-chip">${publicLabel}</span>
+                            </div>
+
+                            ${mobileWeatherLine}
+
+                            <details class="mobile-details">
+                                <summary>Details</summary>
+                                <div class="mobile-details-content">
+                                    ${organization}
+                                    ${phone}
+                                    ${email}
+                                    ${address}
+                                    <div>${description}</div>
+                                </div>
+                            </details>
                         </div>
 
-                        <div class="event-desc">${description}</div>
-
-                        <div class="event-meta">
-                            <div>Date: ${formatDate(event.event_date)}</div>
-                            ${weatherLine}
-                            ${organization}
-                            ${phone}
-                            ${email}
-                            ${address}
-                        </div>
                     </article>
                 `;
             }).join("");
