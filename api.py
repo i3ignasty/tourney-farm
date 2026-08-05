@@ -12,6 +12,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "https://tourney.farm",
         "https://tourney-farm.pages.dev",
         "https://tourney-farm.onrender.com",
         "http://localhost:8000",
