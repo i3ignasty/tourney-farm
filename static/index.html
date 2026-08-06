@@ -1255,16 +1255,51 @@
         checkApiStatus();
         loadWeekendEvents();
 
-        async function loadLastUpdated() {
+       async function loadLastUpdated() {
     try {
         const response = await fetch(`${apiBase}/last-updated`);
         const data = await response.json();
 
+        const lastUpdatedElement = document.getElementById("last-updated");
+
+        if (!lastUpdatedElement) {
+            return;
+        }
+
         if (!data.last_updated) {
-            document.getElementById("last-updated").textContent =
+            lastUpdatedElement.textContent =
                 "Data sourced from Iowa DNR tournament permits • Last Updated unavailable";
             return;
         }
+
+        const cleanTimestamp = data.last_updated.replace(
+            /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})\.\d+$/,
+            "$1"
+        );
+
+        const date = new Date(cleanTimestamp);
+
+        const formattedDate = date.toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+        });
+
+        lastUpdatedElement.textContent =
+            `Data sourced from Iowa DNR tournament permits • Last Updated ${formattedDate}`;
+    } catch (error) {
+        console.error("Unable to load last updated timestamp", error);
+
+        const lastUpdatedElement = document.getElementById("last-updated");
+
+        if (lastUpdatedElement) {
+            lastUpdatedElement.textContent =
+                "Data sourced from Iowa DNR tournament permits • Last Updated unavailable";
+        }
+    }
+}
 
         const cleanTimestamp = data.last-updated.replace(
             /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})\.\d+$/,
