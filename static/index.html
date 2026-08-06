@@ -579,8 +579,10 @@
         .footer-note {
             text-align: center;
             color: var(--muted);
-            font-size: 13px;
-            padding: 20px;
+            font-size: 12px;
+            padding: 24px 0;
+            margin-top: 20px;
+            border-top: 1px solid rgba(156, 163, 175, 0.15);
         }
 
         #searchSummary {
@@ -808,12 +810,8 @@
                 </div>
             </section>
 
-            <div class="footer-note">
-                Tourney Farm MVP running from FastAPI and SQLite.
-            </div>
-            <div id="last-updated">
-
-                Data sourced from Iowa DNR tournament permits • Last Updated Loading...
+            <div class="footer-note" id="last-updated">
+                    Tourney Farm • Data sourced from Iowa DNR tournament permits • Last Updated Loading...
 
             </div>
         </div>
