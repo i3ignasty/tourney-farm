@@ -1256,21 +1256,28 @@
 loadWeekendEvents();
 
 async function loadLastUpdated() {
+    const lastUpdatedElement = document.getElementById("last-updated");
+
+    if (!lastUpdatedElement) {
+        return;
+    }
+
     try {
         const response = await fetch(`${apiBase}/last-updated`);
         const data = await response.json();
-
-        const lastUpdatedElement = document.getElementById("last-updated");
-
-        if (!lastUpdatedElement) {
-            return;
-        }
 
         if (!data.last_updated) {
             lastUpdatedElement.textContent =
                 "Data sourced from Iowa DNR tournament permits • Last Updated unavailable";
             return;
         }
+
+        const rawTimestamp = data.last_updated;
+
+        const cleanTimestamp = rawTimestamp.replace(
+            /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})\.\d+$/,
+            "$1"
+        );
 
         const date = new Date(cleanTimestamp);
 
@@ -1287,12 +1294,8 @@ async function loadLastUpdated() {
     } catch (error) {
         console.error("Unable to load last updated timestamp", error);
 
-        const lastUpdatedElement = document.getElementById("last-updated");
-
-        if (lastUpdatedElement) {
-            lastUpdatedElement.textContent =
-                "Data sourced from Iowa DNR tournament permits • Last Updated unavailable";
-        }
+        lastUpdatedElement.textContent =
+            "Data sourced from Iowa DNR tournament permits • Last Updated unavailable";
     }
 }
 
