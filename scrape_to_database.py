@@ -4,6 +4,8 @@ import re
 import time
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
+from datetime import datetime
+import json
 
 # Main Iowa DNR API URLs
 events_url = "https://programs.iowadnr.gov/specialevents/Search.aspx/GetEvents"
@@ -245,3 +247,12 @@ for event in unique_events.values():
 print()
 print("Database import complete.")
 print(f"Total events saved to database: {saved_count}")
+
+last_updated = {
+    "last_updated": datetime.now().isoformat()
+}
+
+with open("static/last_updated.json", "w") as f:
+    json.dump(last_updated, f)
+
+print("Last updated timestamp written to static/last_updated.json")
