@@ -5,9 +5,27 @@ from datetime import date, timedelta
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+import json
+from pathlib import Path
 
 
 app = FastAPI()
+
+@app.get("/last-updated")
+def get_last_updated():
+    base_dir = Path(__file__).resolve().parent
+    path = base_dir / "static" / "last_updated.json"
+
+    if not path.exists():
+        return {
+            "last_updated": None,
+            "debug_path_checked": str(path)
+        }
+
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    return data
 
 app.add_middleware(
     CORSMiddleware,
