@@ -983,7 +983,9 @@
                             </div>
 
                             <div class="badges">
-                                <span class="badge ${badgeClass}">${event.event_category}</span>
+                                <span class="badge ${badgeClass}">
+                                    ${getDisplayCategory(event.event_category)}
+                                </span>
                                 <span class="badge ${publicClass}">${publicLabel}</span>
                             </div>
 
@@ -1144,6 +1146,14 @@
 
             searchEvents();
         }
+
+        function getDisplayCategory(category) {
+            if (category === "Tournament-Free Lake") {
+                return "Tournament-Free Day";
+            }
+
+            return category;
+}
 
         async function searchEvents() {
             const lake = document.getElementById("lakeSearch").value.trim();
