@@ -1,0 +1,21 @@
+{
+  "name": "Tourney Farm",
+  "short_name": "Tourney Farm",
+  "description": "Find fishing tournaments in Iowa.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1d4ed8",
+  "icons": [
+    {
+      "src": "/TF_Logo2-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/TF_Logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
