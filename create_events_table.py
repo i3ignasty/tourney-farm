@@ -31,6 +31,16 @@ CREATE TABLE IF NOT EXISTS events (
 )
 """)
 
+# Create analytics tracking table
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS analytics_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_type TEXT NOT NULL,
+    event_value TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+""")
+
 # Save changes
 connection.commit()
 

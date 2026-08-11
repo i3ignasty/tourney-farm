@@ -7,7 +7,8 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import json
 from pathlib import Path
-
+from pydantic import BaseModel
+import sqlite3
 
 app = FastAPI()
 
@@ -41,6 +42,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class AnalyticsEvent(BaseModel):
+    event_type: str
+    event_value: str | None = None
+
+@app.post("/api/event")
+def track_event(event: AnalyticsEvent):
+
+    conn = sqlite3.connect("iowa_tournaments.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO analytics_events
+        (event_type, event_value)
+        VALUES (?, ?)
+    """, (
+        event.event_type,
+        event.event_value
+    ))
+
+    conn.commit()
+    conn.close()
+
+    return {"success": True}
 
 def get_database_connection():
     connection = sqlite3.connect("iowa_tournaments.db")
