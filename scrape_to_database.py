@@ -252,7 +252,11 @@ last_updated = {
     "last_updated": datetime.now().isoformat()
 }
 
-with open("static/last_updated.json", "w") as f:
+from pathlib import Path
+
+output_file = Path("static/last_updated.json")
+
+with open(output_file, "w") as f:
     json.dump(last_updated, f)
 
-print("Last updated timestamp written to static/last_updated.json")
+print(f"Timestamp written to: {output_file.resolve()}")

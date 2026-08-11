@@ -1,0 +1,3 @@
+- Add individual lake pages
+- Add individual tournament pages
+- Add organization pages

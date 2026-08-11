@@ -2,6 +2,8 @@ import requests
 import pandas as pd
 import re
 import time
+from datetime import datetime
+import json
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
@@ -206,3 +208,10 @@ df.to_excel(output_file, index=False)
 print()
 print(f"Excel file created: {output_file}")
 print(f"Total tournaments exported: {len(df)}")
+
+last_updated = {
+    "last_updated": datetime.now().isoformat()
+}
+
+with open("static/last_updated.json", "w") as f:
+    json.dump(last_updated, f)
