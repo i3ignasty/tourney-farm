@@ -892,6 +892,24 @@
     <script>
         const apiBase = "https://tourney-farm.onrender.com";
 
+        async function trackEvent(eventType, eventValue = null) {
+    try {
+        await fetch(`${apiBase}/api/event`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                event_type: eventType,
+                event_value: eventValue
+            })
+        });
+    } catch (error) {
+        console.error("Tracking error:", error);
+    }
+}
+
+
         function setApiStatus(text, good = true) {
             const status = document.getElementById("apiStatus");
             status.textContent = text;
@@ -1232,6 +1250,9 @@
 
         async function searchEvents() {
             const lake = document.getElementById("lakeSearch").value.trim();
+            if (lake.length >= 2) {
+                    trackEvent("search", lake);
+                }
             const category = document.getElementById("categoryFilter").value;
             const publicValue = document.getElementById("publicFilter").value;
             const startDate = document.getElementById("startDateFilter").value;
@@ -1418,9 +1439,13 @@ installBtn.addEventListener('click', async () => {
 
     installBtn.hidden = true;
 });
-window.addEventListener('appinstalled', () => {
+window.addEventListener("appinstalled", () => {
+    trackEvent("pwa_install", "installed");
     deferredPrompt = null;
-    installBtn.hidden = true;
+
+    if (installBtn) {
+        installBtn.hidden = true;
+    }
 });
 </script>
 </body>
