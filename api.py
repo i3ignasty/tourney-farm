@@ -14,7 +14,7 @@ app = FastAPI()
 @app.get("/last-updated")
 def get_last_updated():
     base_dir = Path(__file__).resolve().parent
-    path = base_dir / "static" / "last_updated.json"
+    path = base_dir / "static" / "lastupdated.json"
 
     if not path.exists():
         return {

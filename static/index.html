@@ -1,8 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
+    <meta charset="UTF-8">
+    <title>Tourney Farm</title>
+
+    /manifest.json
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1d4ed8">
     <meta name="description"
         content="Find Iowa fishing tournaments quickly. Search bass tournaments, club events, lake schedules, dates, organizers and locations across Iowa.">
     <meta property="og:title" content="Tourney Farm">
@@ -11,6 +18,7 @@
     
         <title>Iowa Fishing Tournaments | Tourney Farm</title>
     <link rel="icon" type="image/x-icon" href="/TF_ICO3.ico">
+    
     <style>
         :root {
             --bg: #111827;
@@ -577,18 +585,50 @@
             background: #111827;
         }
 
+        .seo-panel {
+    margin-top: 24px;
+    padding: 24px;
+
+    background: linear-gradient(180deg, var(--card-light), var(--card));
+    border: 1px solid rgba(245, 158, 11, 0.14);
+    border-radius: 24px;
+
+    box-shadow: var(--shadow);
+    }
+
+        .seo-panel h2 {
+            margin: 0 0 12px;
+            font-size: 28px;
+            color: var(--primary-light);
+        }
+
+        .seo-panel p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 15px;
+            max-width: 800px;
+        }
+
         .loading {
             color: var(--muted);
             padding: 18px;
         }
 
         .footer-note {
+            margin-top: 30px;
+            padding: 20px;
             text-align: center;
             color: var(--muted);
-            font-size: 12px;
-            padding: 24px 0;
-            margin-top: 20px;
-            border-top: 1px solid rgba(156, 163, 175, 0.15);
+            font-size: 13px;
+
+            background: rgba(17, 24, 39, 0.55);
+            border: 1px solid rgba(245, 158, 11, 0.12);
+            border-radius: 16px;
+
+            box-shadow: 0 8px 24px rgba(0,0,0,0.20);
+
+            line-height: 1.6;
         }
 
         .seo-content {
@@ -823,9 +863,11 @@
             </section>
 
             <div class="footer-note" id="last-updated">
-                    Tourney Farm • Data sourced from Iowa DNR tournament permits • Last Updated Loading...
+            <div><strong>Tourney Farm</strong></div>
+            <div>Data sourced from Iowa DNR tournament permits</div>
+            <div>Last Updated Loading...</div>
+         </div>
 
-            </div>
         </div>
     </main>
 
@@ -1312,12 +1354,28 @@ async function loadLastUpdated() {
 loadLastUpdated();
       
     </script> 
+   <section class="seo-panel">
     <h2>Iowa Fishing Tournament Schedule</h2>
 
-        <p>
+    <p>
         Tourney Farm helps anglers find upcoming fishing tournaments in Iowa.
         Search bass tournaments, charity events, club tournaments, kayak events,
         and open fishing tournaments by lake, date, organizer, and location.
-        </p>
+    </p>
+</section>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then(() => {
+          console.log("Tourney Farm service worker registered.");
+        })
+        .catch((error) => {
+          console.error("Service worker registration failed:", error);
+        });
+    });
+  }
+</script>
 </body>
 </html>
