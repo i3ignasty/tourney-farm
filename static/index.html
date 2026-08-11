@@ -3,24 +3,20 @@
 <head>
     
     <meta charset="UTF-8">
-    <title>Tourney Farm</title>
-
     <link rel="manifest" href="/manifest.json">
 
-    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#1d4ed8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Tourney Farm">
+    <link rel="apple-touch-icon" href="/TF_Logo-192.png">
     <meta name="description"
         content="Find Iowa fishing tournaments quickly. Search bass tournaments, club events, lake schedules, dates, organizers and locations across Iowa.">
     <meta property="og:title" content="Tourney Farm">
     <meta property="og:description" content="Find Iowa fishing tournaments fast.">
-    <meta property="og:image" content="https://tourney.farm/static/TF_Logo.png">
-    
-        <title>Iowa Fishing Tournaments | Tourney Farm</title>
+    <meta property="og:image" content="https://tourney.farm/TF_Logo.png">
+    <title>Iowa Fishing Tournaments | Tourney Farm</title>
     <link rel="icon" type="image/x-icon" href="/TF_ICO3.ico">
-    <button id="installBtn" style="display:none;">
-    📱 Install App
-    </button>
     <style>
         :root {
             --bg: #111827;
@@ -107,6 +103,20 @@
             font-size: 13px;
         }
 
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .install-btn {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #111827;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.26);
+        }
+        .install-btn[hidden] {
+            display: none;
+        }
         .status-pill {
             background: rgba(245, 158, 11, 0.14);
             border: 1px solid rgba(245, 158, 11, 0.38);
@@ -756,7 +766,10 @@
                         <span>Iowa fishing tournament finder</span>
                     </div>
                 </div>
-                <div class="status-pill" id="apiStatus">Checking API...</div>
+                <div class="nav-actions">
+                    <button id="installBtn" class="install-btn" type="button" hidden>Install App</button>
+                    <div class="status-pill" id="apiStatus">Checking API...</div>
+                </div>
             </div>
 
             <section class="hero">
@@ -864,11 +877,11 @@
                 </div>
             </section>
 
-            <div class="footer-note" id="last-updated">
-            <div><strong>Tourney Farm</strong></div>
-            <div>Data sourced from Iowa DNR tournament permits</div>
-            <div>Last Updated Loading...</div>
-         </div>
+            <div class="footer-note">
+                <div><strong>Tourney Farm</strong></div>
+                <div>Data sourced from Iowa DNR tournament permits</div>
+                <div id="last-updated">Last Updated Loading...</div>
+            </div>
 
         </div>
     </main>
@@ -1321,8 +1334,7 @@ async function loadLastUpdated() {
         const data = await response.json();
 
         if (!data.last_updated) {
-            lastUpdatedElement.textContent =
-                "Data sourced from Iowa DNR tournament permits • Last Updated unavailable";
+            lastUpdatedElement.textContent = "Last Updated unavailable";
             return;
         }
 
@@ -1343,13 +1355,11 @@ async function loadLastUpdated() {
             minute: "2-digit"
         });
 
-        lastUpdatedElement.textContent =
-            `Data sourced from Iowa DNR tournament permits • Last Updated ${formattedDate}`;
+        lastUpdatedElement.textContent = `Last Updated ${formattedDate}`;
     } catch (error) {
         console.error("Unable to load last updated timestamp", error);
 
-        lastUpdatedElement.textContent =
-            "Data sourced from Iowa DNR tournament permits • Last Updated unavailable";
+        lastUpdatedElement.textContent = "Last Updated unavailable";
     }
 }
 
@@ -1389,11 +1399,12 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
     const installBtn = document.getElementById('installBtn');
     if (installBtn) {
-        installBtn.style.display = 'inline-block';
+        installBtn.hidden = false;
     }
 });
 
-document.getElementById('installBtn').addEventListener('click', async () => {
+const installBtn = document.getElementById('installBtn');
+installBtn.addEventListener('click', async () => {
     if (!deferredPrompt) return;
 
     deferredPrompt.prompt();
@@ -1402,7 +1413,11 @@ document.getElementById('installBtn').addEventListener('click', async () => {
 
     deferredPrompt = null;
 
-    document.getElementById('installBtn').style.display = 'none';
+    installBtn.hidden = true;
+});
+window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    installBtn.hidden = true;
 });
 </script>
 </body>
