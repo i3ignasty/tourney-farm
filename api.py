@@ -66,6 +66,27 @@ def track_event(event: AnalyticsEvent):
 
     return {"success": True}
 
+@app.get("/api/analytics")
+def get_analytics():
+    conn = sqlite3.connect("iowa_tournaments.db")
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM analytics_events
+        ORDER BY id DESC
+        LIMIT 100
+    """)
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return {
+        "count": len(rows),
+        "events": [dict(row) for row in rows]
+    }
+
 def get_database_connection():
     connection = sqlite3.connect("iowa_tournaments.db")
     connection.row_factory = sqlite3.Row
