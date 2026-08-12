@@ -54,4 +54,26 @@ for row in event_rows:
     print(f"{row[0]} | {row[1]} | {row[2]} | {row[3]} | Public: {row[4]}")
 
 # Close connection
+print()
+print("Analytics Events")
+print("-" * 40)
+
+cursor.execute("""
+SELECT
+    id,
+    event_type,
+    event_value,
+    created_at
+FROM analytics_events
+ORDER BY id DESC
+LIMIT 20
+""")
+
+analytics_rows = cursor.fetchall()
+
+if analytics_rows:
+    for row in analytics_rows:
+        print(row)
+else:
+    print("No analytics events found.")
 connection.close()

@@ -87,6 +87,38 @@ def get_analytics():
         "events": [dict(row) for row in rows]
     }
 
+@app.get("/api/analytics/summary")
+def analytics_summary():
+    conn = sqlite3.connect("iowa_tournaments.db")
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT COUNT(*) AS total_searches
+        FROM analytics_events
+        WHERE event_type = 'search'
+    """)
+    total = cursor.fetchone()["total_searches"]
+
+    cursor.execute("""
+        SELECT
+            event_value,
+            COUNT(*) AS searches
+        FROM analytics_events
+        WHERE event_type = 'search'
+        GROUP BY event_value
+        ORDER BY searches DESC
+        LIMIT 10
+    """)
+    top_searches = [dict(row) for row in cursor.fetchall()]
+
+    conn.close()
+
+    return {
+        "total_searches": total,
+        "top_searches": top_searches
+    }
+
 def get_database_connection():
     connection = sqlite3.connect("iowa_tournaments.db")
     connection.row_factory = sqlite3.Row
