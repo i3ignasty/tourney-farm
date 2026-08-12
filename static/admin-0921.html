@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tourney Farm Analytics</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #111827;
+            color: white;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #f59e0b;
+ **     }
+
+        .card {
+         ** background: #1f2937;
+           **adding: 20px;
+            border-**dius: 12px;
+            margin-bo**om: 20px;
+       **
+
+        .big**umber**
+            font-size: 48px;
+   **       font-weight: bold;
+       **   color: #f59e0b;
+        }
+
+   **   table {
+            width: 100**
+            border-collapse: col**pse;
+        }
+
+        td, th {
+**          padding: 10px;
+        **  border-bottom: 1px solid #37415**
+        }
+
+        th {
+        **  text-align: left;
+            c**or: #f59e0b;
+        }
+    </styl**
+</head>
+
+<body>
+
+<h1>Tourney Far**Analytics</h1>
+
+<div class="card"**    <h2>Total Searches</h2>
+    <**v class="big-number" id="totalSea**hes">0</div>
+</div>
+
+<div class="**rd">
+    <h2>Top Searches</h2>
+
+ ** <table>
+        <thead>
+        **  <tr>
+                <th>Search**erm</th**                <th>Count</th>
+  **        </tr>
+        </thead>
+
+ **     <tbody id="topSearches">
+   **   </tbody>
+    </table>
+</div>
+
+**iv class="card">
+    <h2>Recent S**rches</h2>
+
+    <table>
+        <**ead>
+            <tr>
+           **   <th>Search Term</th>
+         **     <th>Timestamp</th>
+         ** </tr>
+        </thead>
+
+        **body id="recentSearches">
+       **/tbody>
+    </table>
+</div>
+
+<scr**t>
+
+fetch("https://tourney**arm.onrender.com/api/analytics/su**ary")
+.then(response => response.**on())
+.then(data => {
+
+    docume**.getElementById("totalSearches").**nerText =
+        data.total_sear**es;
+
+    let topHtml = "";
+
+    d**a.top_searches.forEach(item => {
+**      topHtml += `
+            <t**
+                <td>${item.event**alue}</td>
+                <td>${**em.searches}</td>
+            </t**
+        `;
+    });
+
+    document**etElementById("topSearches").inne**TML = topHtml;
+
+    let recentHtm**= "";
+
+    data.recent_searches.f**Each(item => {
+        recentHtml**= `
+            <tr>
+            **  <td>${item.event_value}</td>
+  **            <td>${item.created_at**/td>
+            </tr>
+        `;**   });
+
+    document.getElementBy**("recentSearches").innerHTML =
+  **    recentHtml;
+
+});
+
+</script>
+
+**body>
+</html>

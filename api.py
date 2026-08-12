@@ -93,13 +93,15 @@ def analytics_summary():
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
+    # Total searches
     cursor.execute("""
         SELECT COUNT(*) AS total_searches
         FROM analytics_events
         WHERE event_type = 'search'
     """)
-    total = cursor.fetchone()["total_searches"]
+    total_searches = cursor.fetchone()["total_searches"]
 
+    # Top searches
     cursor.execute("""
         SELECT
             event_value,
@@ -112,11 +114,24 @@ def analytics_summary():
     """)
     top_searches = [dict(row) for row in cursor.fetchall()]
 
+    # Recent searches
+    cursor.execute("""
+        SELECT
+            event_value,
+            created_at
+        FROM analytics_events
+        WHERE event_type = 'search'
+        ORDER BY created_at DESC
+        LIMIT 20
+    """)
+    recent_searches = [dict(row) for row in cursor.fetchall()]
+
     conn.close()
 
     return {
-        "total_searches": total,
-        "top_searches": top_searches
+        "total_searches": total_searches,
+        "top_searches": top_searches,
+        "recent_searches": recent_searches
     }
 
 def get_database_connection():
